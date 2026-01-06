@@ -4,3 +4,4 @@ python-decouple~=3.8
 asgiref~=3.8
 sqlparse~=0.4
 requests~=2.32
+Pillow~=10.0

@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 customerTableBody.innerHTML = ''; // Clear existing rows
                 data.forEach(customer => {
+                    const imageUrl = customer.image ? customer.image : '/static/images/placeholder.png';
                     const row = `
                         <tr>
+                            <td><img src="${imageUrl}" class="img-thumbnail" style="width: 50px;"></td>
                             <td>${customer.name}</td>
                             <td>${customer.email}</td>
                             <td>${customer.phone}</td>
@@ -69,21 +71,23 @@ document.addEventListener('DOMContentLoaded', function () {
     editCustomerForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const customerId = document.getElementById('edit-customer-id').value;
-        const formData = {
-            name: document.getElementById('edit-name').value,
-            email: document.getElementById('edit-email').value,
-            phone: document.getElementById('edit-phone').value,
-            address: document.getElementById('edit-address').value,
-            category: document.getElementById('edit-category').value,
-        };
+        const formData = new FormData();
+        formData.append('name', document.getElementById('edit-name').value);
+        formData.append('email', document.getElementById('edit-email').value);
+        formData.append('phone', document.getElementById('edit-phone').value);
+        formData.append('address', document.getElementById('edit-address').value);
+        formData.append('category', document.getElementById('edit-category').value);
+        const imageInput = document.getElementById('edit-image');
+        if (imageInput.files[0]) {
+            formData.append('image', imageInput.files[0]);
+        }
 
         fetch(`/api/customers/${customerId}/`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
             },
-            body: JSON.stringify(formData),
+            body: formData,
         })
         .then(response => {
             if (!response.ok) {
@@ -110,21 +114,23 @@ document.addEventListener('DOMContentLoaded', function () {
     const addCustomerForm = document.getElementById('add-customer-form');
     addCustomerForm.addEventListener('submit', function (event) {
         event.preventDefault();
-        const formData = {
-            name: document.getElementById('name').value,
-            email: document.getElementById('email').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            category: document.getElementById('category').value,
-        };
+        const formData = new FormData();
+        formData.append('name', document.getElementById('name').value);
+        formData.append('email', document.getElementById('email').value);
+        formData.append('phone', document.getElementById('phone').value);
+        formData.append('address', document.getElementById('address').value);
+        formData.append('category', document.getElementById('category').value);
+        const imageInput = document.getElementById('image');
+        if (imageInput.files[0]) {
+            formData.append('image', imageInput.files[0]);
+        }
 
         fetch('/api/customers/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken'),
             },
-            body: JSON.stringify(formData),
+            body: formData,
         })
         .then(response => {
             if (!response.ok) {

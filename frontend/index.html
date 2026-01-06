@@ -22,7 +22,7 @@
                         <a class="nav-link" href="/customers">Customers</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Stock</a>
+                        <a class="nav-link" href="/stock">Stock</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Invoices</a>
@@ -82,14 +82,30 @@
                 </div>
             </div>
         </div>
+        <div id="notification-area" class="alert alert-info" style="display: none;"></div>
         <div class="row mt-4">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
                         Sales Overview
                     </div>
                     <div class="card-body">
                         <canvas id="salesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Broadcast Message
+                    </div>
+                    <div class="card-body">
+                        <form id="broadcast-form">
+                            <div class="mb-3">
+                                <textarea class="form-control" id="message-content" rows="3" placeholder="Enter your message..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send Broadcast</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -123,6 +139,54 @@
                     document.getElementById('sales-summary').textContent = 'Error';
                     document.getElementById('employee-count').textContent = 'Error';
                 });
+
+            function fetchLatestMessage() {
+                fetch('/api/latest-message/')
+                    .then(response => response.json())
+                    .then(data => {
+                        const notificationArea = document.getElementById('notification-area');
+                        if (data.content) {
+                            notificationArea.textContent = data.content;
+                            notificationArea.style.display = 'block';
+                        }
+                    });
+            }
+
+            fetchLatestMessage();
+
+            const broadcastForm = document.getElementById('broadcast-form');
+            broadcastForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const content = document.getElementById('message-content').value;
+                fetch('/api/messages/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken'),
+                    },
+                    body: JSON.stringify({ content }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    fetchLatestMessage();
+                    document.getElementById('message-content').value = '';
+                });
+            });
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
 
             const ctx = document.getElementById('salesChart').getContext('2d');
             new Chart(ctx, {

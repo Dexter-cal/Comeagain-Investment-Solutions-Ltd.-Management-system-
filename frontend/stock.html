@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Management</title>
+    <title>Stock Management</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -19,10 +19,10 @@
                         <a class="nav-link" href="/">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/customers">Customers</a>
+                        <a class="nav-link" href="/customers">Customers</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/stock">Stock</a>
+                        <a class="nav-link active" aria-current="page" href="/stock">Stock</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Invoices</a>
@@ -48,114 +48,98 @@
 
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Customer Management</h1>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
-                Add Customer
+            <h1>Stock Management</h1>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStockModal">
+                Add Stock
             </button>
         </div>
         <div class="mb-3">
-            <input type="text" class="form-control" id="customer-search" placeholder="Search customers...">
+            <input type="text" class="form-control" id="stock-search" placeholder="Search stock...">
         </div>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">Image</th>
                     <th scope="col">Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Category</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Supplier</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
-            <tbody id="customer-table-body">
-                <!-- Customer rows will be inserted here by JavaScript -->
+            <tbody id="stock-table-body">
+                <!-- Stock rows will be inserted here by JavaScript -->
             </tbody>
         </table>
     </div>
 
-    <!-- Add Customer Modal -->
-    <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+    <!-- Add Stock Modal -->
+    <div class="modal fade" id="addStockModal" tabindex="-1" aria-labelledby="addStockModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addCustomerModalLabel">Add New Customer</h5>
+                    <h5 class="modal-title" id="addStockModalLabel">Add New Stock</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="add-customer-form">
+                    <form id="add-stock-form">
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="image" class="form-label">Image</label>
-                            <input type="file" class="form-control" id="image">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" required>
+                            <label for="quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="quantity" required>
                         </div>
                         <div class="mb-3">
-                            <label for="phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="phone" required>
+                            <label for="price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="price" step="0.01" required>
                         </div>
                         <div class="mb-3">
-                            <label for="address" class="form-label">Address</label>
-                            <textarea class="form-control" id="address" rows="3" required></textarea>
+                            <label for="supplier" class="form-label">Supplier</label>
+                            <select class="form-select" id="supplier"></select>
                         </div>
-                        <div class="mb-3">
-                            <label for="category" class="form-label">Category</label>
-                            <select class="form-select" id="category">
-                                <option value="new">New</option>
-                                <option value="regular">Regular</option>
-                                <option value="vip">VIP</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Save Customer</button>
+                        <button type="submit" class="btn btn-primary">Save Stock</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Edit Customer Modal -->
-    <div class="modal fade" id="editCustomerModal" tabindex="-1" aria-labelledby="editCustomerModalLabel" aria-hidden="true">
+    <!-- Edit Stock Modal -->
+    <div class="modal fade" id="editStockModal" tabindex="-1" aria-labelledby="editStockModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editCustomerModalLabel">Edit Customer</h5>
+                    <h5 class="modal-title" id="editStockModalLabel">Edit Stock</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="edit-customer-form">
-                        <input type="hidden" id="edit-customer-id">
+                    <form id="edit-stock-form">
+                        <input type="hidden" id="edit-stock-id">
                         <div class="mb-3">
                             <label for="edit-name" class="form-label">Name</label>
                             <input type="text" class="form-control" id="edit-name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-image" class="form-label">Image</label>
-                            <input type="file" class="form-control" id="edit-image">
+                            <label for="edit-description" class="form-label">Description</label>
+                            <textarea class="form-control" id="edit-description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="edit-email" required>
+                            <label for="edit-quantity" class="form-label">Quantity</label>
+                            <input type="number" class="form-control" id="edit-quantity" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-phone" class="form-label">Phone</label>
-                            <input type="text" class="form-control" id="edit-phone" required>
+                            <label for="edit-price" class="form-label">Price</label>
+                            <input type="number" class="form-control" id="edit-price" step="0.01" required>
                         </div>
                         <div class="mb-3">
-                            <label for="edit-address" class="form-label">Address</label>
-                            <textarea class="form-control" id="edit-address" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="edit-category" class="form-label">Category</label>
-                            <select class="form-select" id="edit-category">
-                                <option value="new">New</option>
-                                <option value="regular">Regular</option>
-                                <option value="vip">VIP</option>
-                            </select>
+                            <label for="edit-supplier" class="form-label">Supplier</label>
+                            <select class="form-select" id="edit-supplier"></select>
                         </div>
                         <button type="submit" class="btn btn-primary">Save Changes</button>
                     </form>
@@ -165,6 +149,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/customers.js"></script>
+    <script src="/static/js/stock.js"></script>
 </body>
 </html>
